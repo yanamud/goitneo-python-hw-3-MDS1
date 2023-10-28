@@ -15,13 +15,18 @@ class Field:
 
 class Birthday(Field):
     def __init__(self, value):
+        res = str(value).replace(',', '').split(' ')
+        birthday = str(res[-1])
+        if len(birthday) != 10:
+            raise ValueError("Please enter birthday in format DD.MM.YYYY")
+        
+        birthday = birthday.split('.')
+        bd = datetime(int(birthday[2]), int(birthday[1]), int(birthday[0]))
         super().__init__(value)
-
 
 class Name(Field):
     def __init__(self, value):
         super().__init__(value)
-
 
 class Phone(Field):
     def __init__(self, value):
@@ -37,12 +42,12 @@ class Record:
         self.phones = [phone] if phone else []
 
     def add_birthday(self, birthday):
-        self.birthday = birthday
-        return f"Birthday {birthday} add success to contact {self.name}"
+        self.birthday = Birthday(birthday)
+        print(f"Birthday {birthday} added success to contact {self.name}")
 
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
-        print(f"Phone number {phone} add success to contact {self.name}")
+        print(f"Phone number {phone} added success to contact {self.name}")
 
     def remove_phone(self, phone):
         for p in self.phones:
@@ -54,10 +59,10 @@ class Record:
 
     def edit_phone(self, old_phone, new_phone):
         for p in self.phones:
-            if p.value == Phone(old_phone):
+            if str(p.value) == str(Phone(old_phone)):
                 self.phones.insert(self.phones.index(p)+1, Phone(new_phone))
                 del self.phones[self.phones.index(p)]
-            print('the phone was changed')
+                print('the phone was changed')
         # else:
             # print("The entered phone was not found")
 
@@ -175,12 +180,12 @@ class AddressBook(UserDict):
             elif command == "change":
                 record = book.find(args[0])
                 record.edit_phone(args[1], args[2])
-                # print(change_contact(args, contacts))
 
             elif command == "phone":
                 record = book.find(args[0])
-                print(record)
-                # print(show_phone(args, contacts))
+                rec = str(record).split(',')
+                print(f"{rec[0]}, {rec[2]}")
+
 
             elif command == "all":
                 for name, record in book.data.items():
@@ -196,15 +201,10 @@ class AddressBook(UserDict):
                 record.add_birthday(args[1])
                 book.add_record(record)
 
-
-
-                #record = Record(args[0])
-                #record.add_birthday(args[1])
-                #book.add_record(record)
-
             elif command == "show-birthday":
                 record = book.find(args[0])
-                print(record)
+                rec = str(record).split(',')
+                print(f"{rec[0]}, {rec[1]}")
 
             elif command == "birthdays":
                 book.get_birthdays_per_week()
