@@ -188,8 +188,19 @@ class AddressBook(UserDict):
 
             elif command == "add-birthday":
                 record = Record(args[0])
+                for name, record in book.data.items():
+                    if name == args[0]:
+                        print("contact exists ")
+                    else:
+                        record = Record(args[0])
                 record.add_birthday(args[1])
                 book.add_record(record)
+
+
+
+                #record = Record(args[0])
+                #record.add_birthday(args[1])
+                #book.add_record(record)
 
             elif command == "show-birthday":
                 record = book.find(args[0])
