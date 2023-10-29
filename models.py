@@ -14,14 +14,17 @@ class Field:
 
 class Birthday(Field):
     def __init__(self, value):
-        res = str(value).replace(',', '').split(' ')
-        birthday = str(res[-1])
-        if len(birthday) != 10:
+        # res = str(value).replace(',', '').split(' ')
+        # birthday = str(res[-1])
+        # if len(birthday) != 10:
+        try:
+            value = datetime.strptime(value, "%d.%M.%Y")
+        except ValueError:
             raise ValueError("Please enter birthday in format DD.MM.YYYY")
         
-        birthday = birthday.split('.')
-        bd = datetime(int(birthday[2]), int(birthday[1]), int(birthday[0]))
-        super().__init__(value)
+        # birthday = birthday.split('.')
+        # bd = datetime(int(birthday[2]), int(birthday[1]), int(birthday[0]))
+        super().__init__(value.date())
 
 
 class Name(Field):
@@ -44,11 +47,9 @@ class Record:
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
-        print(f"Birthday {birthday} added success to contact {self.name}")
-
+        
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
-        print(f"Phone number {phone} added success to contact {self.name}")
 
     def remove_phone(self, phone):
         for p in self.phones:

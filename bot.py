@@ -2,63 +2,17 @@ from models import AddressBook, Record
 from collections import defaultdict
 from datetime import datetime
 import calendar
-import re
 
 
 def input_errors(func):
-    def inner(*args, **kwargs):
-        command = str(func).split()
-
-        if command[1] in ('add_contact', 'change_contact'):
-            if command[1] == 'add_contact':
-                res = 2
-            if command[1] == 'change_contact':
-                res = 3
-            try:
-                if len(args) == res:
-                    try:
-                        new_phone = re.sub(r"[0-9]", "", args[-1])
-                        if len(new_phone) == 0:
-                            try:
-                                if len(args[-1]) == 10:
-                                    return func(*args, **kwargs)
-                                else:
-                                    result = func(args, kwargs)
-                                    return result
-                            except:
-                                print("The number should contain 10 digits.")
-                        else:
-                            return func(*args, **kwargs)
-                    except:
-                        return "Pleae, enter correct phone number. It should contain only digits "
-                else:
-                    return func(*args, **kwargs)
-            except:
-                return "Please, give me name and phone"
-
-        elif command[1] == 'show_phone':
-            try:
-                if len(args) == 1:
-                    return func(*args, **kwargs)
-                else:
-                    result = func(args, kwargs)
-                    return result
-            except:
-                return "Please, give me name"
-
-        elif command[1] == 'add_birthday':
-            date = re.sub(r"[0-9]", "", args[-1])
-            date = str(date).replace('.', '')
-            try:
-                if len(args) == 2 and len(args[-1]) and date == '':
-                    return func(*args, **kwargs)
-                else:
-                    print("Please, give me birthday in format DD.MM.YYYY")
-                    result = func(args, kwargs)
-                    return result
-            except:
-                return "Please, give me birthday"
-    return inner
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except IndexError as e:
+            return e
+        except ValueError as e:
+            return e
+    return wrapper
 
 # parsing of the entered command
 
@@ -115,7 +69,7 @@ def show_phone(*args, contacts):
 
 
 @input_errors
-def show_all(contacts):
+def show_all(*args, contacts):
     return contacts
 
 # adding birthday
@@ -127,7 +81,7 @@ def add_birthday(*args, contacts):
 
     if name in contacts.keys():
         contacts[name].add_birthday(args[1])
-        # return (f"Birthday {args[1]} added success to contact {name}")
+        return (f"Birthday {args[1]} added success to contact {name}")
     else:
         contacts.add_record(Record(name, birthday=args[1]))
         return "Contact added."
@@ -238,13 +192,13 @@ def main():
             print(show_all(contacts=contacts))
 
         elif command == "add-birthday":
-            add_birthday(*args, contacts=contacts)
+            print(add_birthday(*args, contacts=contacts))
 
         elif command == "show-birthday":
             print(show_birthday(*args, contacts=contacts))
 
         elif command == "birthdays":
-            get_birthdays_per_week(contacts=contacts)
+            print(get_birthdays_per_week(contacts=contacts))
 
         else:
             print("Invalid command.")
