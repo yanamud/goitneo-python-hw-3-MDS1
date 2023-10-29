@@ -1,5 +1,4 @@
 from collections import UserDict
-import datetime
 from datetime import datetime
 from collections import defaultdict
 import calendar
@@ -24,9 +23,11 @@ class Birthday(Field):
         bd = datetime(int(birthday[2]), int(birthday[1]), int(birthday[0]))
         super().__init__(value)
 
+
 class Name(Field):
     def __init__(self, value):
         super().__init__(value)
+
 
 class Phone(Field):
     def __init__(self, value):
@@ -39,7 +40,7 @@ class Record:
     def __init__(self, name, birthday=None, phone=None):
         self.name = Name(name)
         self.birthday = birthday
-        self.phones = [phone] if phone else []
+        self.phones = [Phone(phone)] if phone else []
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
@@ -76,12 +77,6 @@ class Record:
 
 
 class AddressBook(UserDict):
-
-    def parse_input(user_input):
-        cmd, *args = user_input.split()
-        cmd = cmd.strip().lower()
-        return cmd, *args
-
     def add_record(self, record: Record):
         self.data[record.name.value] = record
 
@@ -128,89 +123,9 @@ class AddressBook(UserDict):
             new_key = key[2:]
             new_value = ", ".join(value)
             print(f"{new_key}: {new_value}")
-
-    def main():
-
-        book = AddressBook()
-        greet_message = "Welcome to the assistant bot!\n" \
-                        "----------------------------------\n" \
-                        "Please, enter a command:\n" \
-                        "  - 'hello' to start the chat\n" \
-                        "  - 'close' or 'exit' to end the chat\n" \
-                        "----------------------------------\n" \
-                        "                                  \n"
-
-        help_message = "How can I help you?\n" \
-            "----------------------------------\n" \
-            "Please, enter a command:\n" \
-            "  - 'add [username] [phone]' to adde Contact\n" \
-            "  - 'change [username] [old phone number] [new phone number]' to update Contact\n" \
-            "  - 'phone [username]' to get the phone number\n" \
-            "  - 'all' to output all the data\n" \
-            "  - 'add-birthday [username] [birthday]' to adde birthday \n" \
-            "  - 'show-birthday [username]' to get birthday \n" \
-            "  - 'birthdays' to display all birthdays within a week \n" \
-            "----------------------------------\n" \
-            "                                  \n" \
-
-        print(greet_message)
-
-        while True:
-            user_input = input("Enter a command: ")
-            command, *args = AddressBook.parse_input(user_input)
-            # print(command, *args)
-
-            if command in ["close", "exit"]:
-                print("Good bye!")
-                break
-
-            elif command == "hello":
-                print(help_message)
-
-            elif command == "add":
-                record = Record(args[0])
-                for name, record in book.data.items():
-                    if name == args[0]:
-                        print("contact exists ")
-                    else:
-                        record = Record(args[0])
-                record.add_phone(args[1])
-                book.add_record(record)
-
-            elif command == "change":
-                record = book.find(args[0])
-                record.edit_phone(args[1], args[2])
-
-            elif command == "phone":
-                record = book.find(args[0])
-                rec = str(record).split(',')
-                print(f"{rec[0]}, {rec[2]}")
-
-
-            elif command == "all":
-                for name, record in book.data.items():
-                    print(name, record)
-
-            elif command == "add-birthday":
-                record = Record(args[0])
-                for name, record in book.data.items():
-                    if name == args[0]:
-                        print("contact exists ")
-                    else:
-                        record = Record(args[0])
-                record.add_birthday(args[1])
-                book.add_record(record)
-
-            elif command == "show-birthday":
-                record = book.find(args[0])
-                rec = str(record).split(',')
-                print(f"{rec[0]}, {rec[1]}")
-
-            elif command == "birthdays":
-                book.get_birthdays_per_week()
-
-            else:
-                print("Invalid command.")
+    
+    def __str__(self) -> str:
+        return "\n".join(str(rec) for rec in self.values())
 
 
 if __name__ == '__main__':
