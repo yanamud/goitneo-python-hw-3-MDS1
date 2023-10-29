@@ -111,9 +111,8 @@ def get_birthdays_per_week(*args, contacts):
         lst = str(value).replace(',', '').replace("'", '').split()
         res = str(lst).replace(',', '').split()
         name = key
-        birthday = str(res[4]).replace("'", '').split(".")
-
-        bd = datetime(int(birthday[2]), int(birthday[1]), int(birthday[0]))
+        birthday = str(res[4]).replace("'", '').split("-")
+        bd = datetime(int(birthday[0]), int(birthday[1]), int(birthday[2]))
         birthday = bd.date()
 
         birthday_this_year = birthday.replace(year=today.year)

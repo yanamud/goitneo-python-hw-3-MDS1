@@ -18,10 +18,10 @@ class Birthday(Field):
         # birthday = str(res[-1])
         # if len(birthday) != 10:
         try:
-            value = datetime.strptime(value, "%d.%M.%Y")
+            value = datetime.strptime(value, "%d.%m.%Y")
         except ValueError:
             raise ValueError("Please enter birthday in format DD.MM.YYYY")
-        
+
         # birthday = birthday.split('.')
         # bd = datetime(int(birthday[2]), int(birthday[1]), int(birthday[0]))
         super().__init__(value.date())
@@ -42,12 +42,12 @@ class Phone(Field):
 class Record:
     def __init__(self, name, birthday=None, phone=None):
         self.name = Name(name)
-        self.birthday = birthday
+        self.birthday = Birthday(birthday)
         self.phones = [Phone(phone)] if phone else []
 
     def add_birthday(self, birthday):
         self.birthday = Birthday(birthday)
-        
+
     def add_phone(self, phone):
         self.phones.append(Phone(phone))
 
@@ -102,7 +102,7 @@ class AddressBook(UserDict):
             res = str(self.data[el]).replace(',', '').split()
             name = res[2]
             birthday = str(res[4]).split('.')
-            bd = datetime(int(birthday[2]), int(birthday[1]), int(birthday[0]))
+            bd = datetime(int(birthday[0]), int(birthday[1]), int(birthday[2]))
             birthday = bd.date()
 
             birthday_this_year = birthday.replace(year=today.year)
@@ -124,7 +124,7 @@ class AddressBook(UserDict):
             new_key = key[2:]
             new_value = ", ".join(value)
             print(f"{new_key}: {new_value}")
-    
+
     def __str__(self) -> str:
         return "\n".join(str(rec) for rec in self.values())
 
